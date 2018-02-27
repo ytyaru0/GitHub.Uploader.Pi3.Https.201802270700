@@ -1,0 +1,24 @@
+#coding:utf-8
+#ExchangeKeysMethod: None# [None, str.lower, str.upper, str.title, , lambda str: str[0].lower()+str[1:], ...]
+#Type: dict# [dict[key]=value, set(), frozenset(), OderDict, ..., setattr(object, key, value)]
+#
+# 設定ファイル（のつもり）
+#
+Path
+    # プロジェクトrootディレクトリから見た相対パス
+    Db  ./res/db/
+Git
+    # HTTPS or SSH。未定義や不正値ならHTTPS。
+    # $ git remote add origin {SSH/HTTPS}
+    #     SSH  : git@{ssh_host}:{user}/{repo}.git
+    #     HTTPS: https://{user}:{pass}@github.com/{user}/{repo}.git
+    Remote  HTTPS
+Github
+    User    ytyaru
+    # auto, 1, true, on、の値で草データを自動収集する
+    # is_make, is_uploadは未実装
+    Contributions
+        IsGet   auto
+        IsMake  auto
+        IsUpload    auto
+
