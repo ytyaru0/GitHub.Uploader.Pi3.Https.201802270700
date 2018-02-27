@@ -2,7 +2,7 @@
 #!python3
 #encoding:utf-8
 import os.path
-import subprocess
+#import subprocess
 import cui.uploader.command.repository.Creator
 import cui.uploader.command.repository.Commiter
 import cui.uploader.command.repository.Deleter
@@ -33,10 +33,12 @@ class Main:
         #self.__account = self.__db.Accounts['Accounts'].find_one(Username=self.__args.username)
         #self.__ssh_configures = self.__db.Accounts['SshConfigures'].find_one(AccountId=self.__account['Id'])
         self.__account = Db().Accounts['Accounts'].find_one(Username=self.__args.username)
+        print('cccccccccccc', self.__account)
         self.__ssh_configures = Db().Accounts['SshConfigures'].find_one(AccountId=self.__account['Id'])
 #        print(self.__args.path_dir_pj)
         self.__repo_name = os.path.basename(self.__args.path_dir_pj)
         self.__repos = Db().Repositories[self.__args.username]['Repositories'].find_one(Name=self.__repo_name)
+        print('dddddddddddd', self.__repos)
         #self.__repos = self.__db.Repositories[self.__args.username]['Repositories'].find_one(Name=self.__repo_name)
 
     def Run(self):
@@ -77,7 +79,8 @@ class Main:
         """
 
     def __Create(self):
-        if os.path.exists(".git"):
+        if os.path.exists(os.path.join(self.__args.path_dir_pj, ".git")): # Upload対象ディレクトリのrootに変更
+#        if os.path.exists(".git"):
             return 0
         answer = ''
         while '' == answer:

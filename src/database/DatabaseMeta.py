@@ -19,6 +19,17 @@ class DatabaseMeta(type):
         for initer in [Apis(), Accounts(), Languages(), GnuLicenses(), Licenses(), OtherRepositories()]:
             print(type(initer), initer)
             attrs['_{0}__Initializers'.format(name)][initer.DbId] = initer # Database.__Initializers['Accounts'] = database.init.AccountsDbInitializer.AccountsDbInitializer()
+            #attrs[initer.DbId] = property(lambda cls: initer.Db)
+
+        """
+        # ユーザ単位DB（AccountsDB生成後でないと作れない）
+        attrs['_{0}__InitializersByMultiUsers'.format(name)] = OrderedDict()
+        accountsDb = attrs['_{0}__Initializers'.format(name)]['Accounts'].Db
+        for initer in [cls(accountsDb) for cls in [Repositories]]:
+            attrs['_{0}__InitializersByMultiUsers'.format(name)][initer.DbId] = initer # Database.__Initializers['Accounts'] = database.init.AccountsDbInitializer.AccountsDbInitializer()
+            #attrs[initer.DbId] = property(lambda cls: initer.Db)
+        """
+
         return type.__new__(cls, name, bases, attrs)
 
     def __init__(cls, name, bases, attrs):
@@ -26,14 +37,32 @@ class DatabaseMeta(type):
         print(attrs)
         for initer in attrs['_{0}__Initializers'.format(name)].values():
             initer.Initialize()
-            attrs[initer.DbId] = property(lambda cls: initer.Db) # Database.Accounts =  database.init.AccountsDbInitializer.AccountsDbInitializer().Db = dataset.connect('sqlite:///' + '.../')
+            #attrs[initer.DbId] = property(lambda cls: initer.Db) # Database.Accounts =  database.init.AccountsDbInitializer.AccountsDbInitializer().Db = dataset.connect('sqlite:///' + '.../')
             #attrs['_{0}__Initializers'.format(name)][initer.DbId] = property(lambda cls: initer) # Database.__Initializers['Accounts'] = database.init.AccountsDbInitializer.AccountsDbInitializer().Db = dataset.connect('sqlite:///' + '.../')
+            #setattr(cls, initer.DbId, property(lambda cls: initer.Db))
+            setattr(cls, initer.DbId, initer.Db)
 
         print(type(attrs['_{0}__Initializers'.format(name)]))
         
         if 0 == attrs['_{0}__Initializers'.format(name)]['Accounts'].Db['Accounts'].count(): raise Exception('登録ユーザがひとつもありません。UserRegister.pyで登録してから再実行してください。')
 
         # ユーザ単位DB（AccountsDB生成後でないと作れない）
+        attrs['_{0}__InitializersByMultiUsers'.format(name)] = OrderedDict()
+        accountsDb = attrs['_{0}__Initializers'.format(name)]['Accounts'].Db
+        #print(attrs['_{0}__Initializers'.format(name)]['Accounts'])
+        #print(attrs['_{0}__Initializers'.format(name)]['Accounts'].Db)
+        #print(type(accountsDb), 'bbbbbbbbbbbbbbbbbbbbbbbbbbb')
+        #print(dir(accountsDb))
+        for initer in [cls(accountsDb) for cls in [Repositories]]:
+            initer.Initialize()
+            #attrs['_{0}__InitializersByMultiUsers'.format(name)][initer.DbId] = initer # Database.__Initializers['Accounts'] = database.init.AccountsDbInitializer.AccountsDbInitializer()
+            setattr(cls, initer.DbId, property(lambda cls: initer.Db))
+        """
+        for initer in attrs['_{0}__InitializersByMultiUsers'.format(name)].values():
+            initer.Initialize()
+            #attrs[initer.DbId] = property(lambda cls: initer.Db) # Database.Accounts =  database.init.AccountsDbInitializer.AccountsDbInitializer().Db = dataset.connect('sqlite:///' + '.../')
+            setattr(cls, initer.DbId, property(lambda cls: initer.Db))
+        """
         """
         attrs['_{0}__InitializersByMultiUsers'.format(name)] = OrderedDict()
         accountsDb = attrs['_{0}__Initializers'.format(name)]['Accounts'].Db
@@ -43,14 +72,12 @@ class DatabaseMeta(type):
             initer.Initialize()
             attrs[initer.DbId] = property(lambda cls: initer.Db) # Database.Accounts =  database.init.AccountsDbInitializer.AccountsDbInitializer().Db = dataset.connect('sqlite:///' + '.../')
         """
-
+        """
         attrs['_{0}__InitializersByMultiUsers'.format(name)] = OrderedDict()
         accountsDb = attrs['_{0}__Initializers'.format(name)]['Accounts'].Db
         for initer in [cls(accountsDb) for cls in [Repositories]]:
             attrs['_{0}__InitializersByMultiUsers'.format(name)][initer.DbId] = initer # Database.__Initializers['Accounts'] = database.init.AccountsDbInitializer.AccountsDbInitializer()
-        for initer in attrs['_{0}__InitializersByMultiUsers'.format(name)].values():
-            initer.Initialize()
-            attrs[initer.DbId] = property(lambda cls: initer.Db) # Database.Accounts =  database.init.AccountsDbInitializer.AccountsDbInitializer().Db = dataset.connect('sqlite:///' + '.../')
+        """
 
         """
         from setting.Config import Config

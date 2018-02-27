@@ -1,6 +1,7 @@
 import subprocess
 import os.path
 #import web.log.Log
+import cui.sh.Client
 """
 * ssh-keygenコマンド文字列を作成する
 * ssh-keygen -l コマンドにて暗号化情報を取得する
@@ -23,6 +24,8 @@ class SshKeyGen(object):
         if os.path.isfile(file_path):
             raise Exception('{0} は既に存在します。パスを変えてから再度実行してください。'.format(file_path))
         command = self.__GetGenerateCommand(type=type, bits=bits, passphrase=passphrase, comment=comment, file_path=file_path)
+        return cui.sh.Client.Client.Run(command)
+        """
         p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         stdout_data, stderr_data = p.communicate()
         stdout_utf8 = stdout_data.decode('utf-8').strip()
@@ -31,6 +34,7 @@ class SshKeyGen(object):
             raise Exception('ssh-keygenコマンドでエラーが発生しました。: {0}'.format(stderr_utf8))
 #        web.log.Log.Log().Logger.debug(stdout_utf8)
         return stdout_utf8
+        """
     
     """
     指定したSSH鍵ファイルの暗号化における情報を取得する。

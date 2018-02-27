@@ -14,10 +14,11 @@ class Config(metaclass=YamlMeta):
 
 
     def __Load(self):
-        path = pathlib.Path('../res/config.yml').resolve()
+        path_dir_root = pathlib.Path(__file__).parent.parent.parent
+        path_file_config = path_dir_root / 'res' / 'config.yml'
+        path = path_file_config.resolve()
         with path.open() as f:
             self.__yaml = yaml.load(f)
-            #self.Yaml = yaml.load(f)
             print(self.__yaml)
 
     def __SetValues(self):

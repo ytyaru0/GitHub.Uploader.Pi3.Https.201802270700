@@ -40,7 +40,8 @@ class Main:
 #        self.__setting = setting.Setting.Setting(os.path.abspath(os.path.dirname(os.path.dirname(__file__))))
 #        self.__setting = setting.Setting.Setting(os.path.abspath(os.path.dirname(__file__)))
         #path_dir_db = self.__setting.DbPath
-        path_dir_db = Config().PathDb
+        #path_dir_db = Config().PathDb
+        path_dir_db = Config()['Path']['Db']
         web.log.Log.Log().Logger.debug(path_dir_db)
         
         # os.path.basename()で空文字を返されないための対策
@@ -51,13 +52,20 @@ class Main:
         if None is args.username:
             #print(self.__setting.GithubUsername)
             #args.username = self.__setting.GithubUsername   
-            print(Config().GithubUser)
-            args.username = Config().GithubUser
+            print(Config()['Github']['User'])
+            args.username = Config()['Github']['User']
         #self.__db = database.Database.Database()
 #        self.__db = database.Database.Database(os.path.abspath(os.path.dirname(__file__)))
         #self.__db.Initialize()
         
+        #print(dir(Db()))
+        print(hasattr(Db(), 'Accounts'))
+        print(type(Db()))
+        print(hasattr(Db().Accounts, 'Accounts'))
+        print(type(Db().Accounts))
+        print(dir(Db().Accounts))
         if None is Db().Accounts['Accounts'].find_one(Username=args.username):
+        #if None is Db().Accounts['Accounts'].find_one(Username=args.username):
         #if None is self.__db.Accounts['Accounts'].find_one(Username=args.username):
             web.log.Log.Log().Logger.warning('指定したユーザ {0} はDBに存在しません。GitHubUserRegister.pyで登録してください。'.format(args.username))
             return

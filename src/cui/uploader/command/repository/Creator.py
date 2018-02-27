@@ -11,6 +11,7 @@ import json
 #import setting.Setting
 from setting.Config import Config
 from database.Database import Database as Db
+import cui.sh.Client
 
 class Creator:
     def __init__(self, client, args):
@@ -36,27 +37,25 @@ class Creator:
         #self.__sshconfigures = self.__db.Accounts['SshConfigures'].find_one(AccountId=self.__account['Id'])
 
     def __CreateLocalRepository(self):
-        subprocess.call(shlex.split("git init"))
+        #client = cui.sh.Client.Client({'cwd': self.__args.path_dir_pj})
+        client = cui.sh.Client.Client(cwd=self.__args.path_dir_pj)
+        client.run("git init")
+        client.run("git config --local user.name '{0}'".format(self.__args.username))
+        client.run("git config --local user.email '{0}'".format(self.__account['MailAddress']))
+        client.run("git remote add origin {0}".format(Config()['Git']['Remote'].GetRepositoryUri(self.__args.username, self.__repo_name)))
+        """
+        subprocess.call(shlex.split("git init"), cwd=self.__args.path_dir_pj)
         print("git init")
-        subprocess.call(shlex.split("git config --local user.name '{0}'".format(self.__args.username)))
+        subprocess.call(shlex.split("git config --local user.name '{0}'".format(self.__args.username)), cwd=self.__args.path_dir_pj)
         print("git config --local user.name '{0}'".format(self.__args.username))
-        subprocess.call(shlex.split("git config --local user.email '{0}'".format(self.__account['MailAddress'])))
+        subprocess.call(shlex.split("git config --local user.email '{0}'".format(self.__account['MailAddress'])), cwd=self.__args.path_dir_pj)
         print("git config --local user.email '{0}'".format(self.__account['MailAddress']))
         
         # HTTPS, SSL どちらかによってリポジトリ文字列を変える
-        repo_str = Config().GitRemote.GetRepositoryUri(self.__args.username, self.__repo_name)
-        #repo_str = self.__RemoteRepositoryName()
-        """
-        なぜかできない。LinuxMint17.3ではできたが、RaspberryPi3のRaspbianではできなかった。
-        SSH通信ができない。ので、HTTPS通信に変更する。SSHよりセキュリティが弱い。
-        subprocess.call(shlex.split("git remote add origin git@{0}:{1}/{2}.git".format(self.__sshconfigures['HostName'], self.__args.username, self.__repo_name)))
-        print("git remote add origin git@{0}:{1}/{2}.git".format(self.__sshconfigures['HostName'], self.__args.username, self.__repo_name))
-        """
-        # https://{user}:{pass}@github.com/{user}/{repo}.git
-#        subprocess.call(shlex.split("git remote add origin https://{0}:{1}@github.com/{0}/{2}.git".format(self.__args.username, self.__account['Password'], self.__repo_name)))
-#        print("git remote add origin https://{0}:{1}@github.com/{0}/{2}.git".format(self.__args.username, self.__account['Password'], self.__repo_name))
-        subprocess.call(shlex.split("git remote add origin {0}".format(repo_str)))
+        repo_str = Config()['Git']['Remote'].GetRepositoryUri(self.__args.username, self.__repo_name)
+        subprocess.call(shlex.split("git remote add origin {0}".format(repo_str)), cwd=self.__args.path_dir_pj)
         print("git remote add origin {0}".format(repo_str))
+        """
     def __InsertRemoteRepository(self, j):
         self.__userRepo.begin()
         repo = self.__userRepo['Repositories'].find_one(Name=j['name'])

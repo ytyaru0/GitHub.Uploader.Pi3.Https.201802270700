@@ -72,6 +72,8 @@ class DbInitializerByMultiUsers(DbInitializer):
             self.__filenames[username] = 'GitHub.{0}.{1}.sqlite3'.format(self.DbId, username)
 
     def __GetUsernames(self):
+        print(self.__accountsDb)
+        print(type(self.__accountsDb))
         #from database.Database import Database as Db # ImportError: cannot import name 'Database'
         #for username in Db().Accounts['Accounts'].find()['Username']: yield username
         #for username in self.__accountsDb['Accounts'].find()['Username']: yield username

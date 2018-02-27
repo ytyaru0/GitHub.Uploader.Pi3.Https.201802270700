@@ -36,7 +36,7 @@ class Deleter:
         self.__DeleteDb()
 
     def __DeleteLocalRepository(self):
-        shutil.rmtree('.git')
+        shutil.rmtree(os.path.join(self.__args.path_dir_pj, '.git'))
 
     def __DeleteDb(self):
         repo = self.__userRepo['Repositories'].find_one(Name=self.__repo_name)

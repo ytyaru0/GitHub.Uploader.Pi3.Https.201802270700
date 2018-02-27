@@ -17,6 +17,8 @@ import cui.register.SshConfigurator
 import cui.register.command.ASubCommand
 import web.log.Log
 import cui.register.SshKeyGen
+from setting.Config import Config
+
 class Inserter(cui.register.command.ASubCommand.ASubCommand):
     def __init__(self, path_dir_root):
         self.__path_dir_root = path_dir_root
@@ -64,13 +66,18 @@ class Inserter(cui.register.command.ASubCommand.ASubCommand):
                 # 3A-2. SSH鍵をGitHubに登録してDBに挿入する
                 j_ssh = client.SshKeys.Create(ssh_key_gen_params['public_key'], title=mailaddress)
                 web.log.Log.Log().Logger.debug(j_ssh)
+                # 3A-3. SSH接続確認
                 self.__setting = setting.Setting.Setting()
+                if 'SSH' == Config()['Git']['Remote'].__name__.upper():
+                    self.__sshkeygen.CheckSshConnect(host, args.username)
+                """
                 if 'SSH' == self.__setting.GitRemote:
                     # 3A-3. SSH接続確認
                     self.__sshkeygen.CheckSshConnect(host, args.username)
                 else:
                     # ラズパイでなぜかSSH接続確認するとフリーズするので省略。
                     print('SSH接続確認を省略します。')
+                """
             else:
                 # 3B-1. ~/.ssh/configから指定されたHostデータを取得する
                 sshconf = cui.register.SshConfigurator.SshConfigurator()
